@@ -12,7 +12,6 @@ LEAGUE_TO_SPORT = {
     'NHL': 'HOCKEY',
     'MLB': 'BASEBALL',
     'CS': 'ESPORTS',
-    'CLUBSOCCER': 'SOCCER'
 }
 
 
@@ -92,6 +91,8 @@ def get_odds():
     odds_data = []
     for item in data:
         league = item.get('sport').upper()  # This is actually the league
+        if league not in LEAGUE_TO_SPORT:
+            continue
         sport = LEAGUE_TO_SPORT.get(league, 'unknown')  # Map league to sport
         updated_at_timestamp_ms = item.get('updated_at')
         updated_at_datetime = datetime.datetime.fromtimestamp(updated_at_timestamp_ms / 1000, tz=datetime.timezone.utc)

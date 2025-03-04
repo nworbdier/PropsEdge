@@ -10,7 +10,6 @@ LEAGUE_TO_SPORT = {
     'NHL': 'HOCKEY',
     'MLB': 'BASEBALL',
     'CS': 'ESPORTS',
-    'CLUBSOCCER': 'SOCCER'
 }
 
 def get_players():
@@ -53,4 +52,3 @@ def get_players():
             writer.writerows(players_data)
     except Exception as e:
         print(f"An error occurred: {e}")
-        
