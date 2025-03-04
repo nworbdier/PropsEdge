@@ -6,15 +6,18 @@ from datetime import date, timedelta
 base_url_matches_list = "https://api.bo3.gg/api/v2/matches/finished"
 base_url_match_details = "https://api.bo3.gg/api/v1/matches/"
 base_url_game_player_stats = "https://api.bo3.gg/api/v1/games/" # Added base URL for game player stats
-date_str = date.today().isoformat() # Today's date in ISO format
+start_date_str = "2024-01-01" # Start date
+end_date_str = "2025-03-03"   # End date
 utc_offset = -18000
 bo_types = "2,3,5"
 tiers = "s,a,b"
 discipline_id = 1
 
-current_date = date.fromisoformat(date_str)
+start_date = date.fromisoformat(start_date_str)
+end_date = date.fromisoformat(end_date_str)
+current_date = start_date
 
-csv_file_path = 'eSports/daily_gamelogs.csv'
+csv_file_path = 'eSports/cs2_master_gamelogs.csv'
 try:
     with open(csv_file_path, 'w', newline='', encoding='utf-8') as f:
         csv_writer = csv.writer(f)
@@ -30,24 +33,23 @@ try:
         csv_writer.writerow(header)
 
 
-        date_str = current_date.isoformat()
-        url_matches_list = f"{base_url_matches_list}?date={date_str}&utc_offset={utc_offset}&filter%5Bbo_type%5D%5Bin%5D={bo_types}&filter%5Btier%5D%5Bin%5D={tiers}&filter%5Bdiscipline_id%5D%5Beq%5D={discipline_id}"
+        while current_date <= end_date:
+            date_str = current_date.isoformat()
+            url_matches_list = f"{base_url_matches_list}?date={date_str}&utc_offset={utc_offset}&filter%5Bbo_type%5D%5Bin%5D={bo_types}&filter%5Btier%5D%5Bin%5D={tiers}&filter%5Bdiscipline_id%5D%5Beq%5D={discipline_id}"
 
-        print(f"Fetching URL: {url_matches_list}") # Added console log for matches list URL
-        response_matches_list = requests.get(url_matches_list)
-        response_matches_list.raise_for_status()
-        matches_list_data = response_matches_list.json()
+            print(f"Fetching URL: {url_matches_list}") # Added console log for matches list URL
+            response_matches_list = requests.get(url_matches_list)
+            response_matches_list.raise_for_status()
+            matches_list_data = response_matches_list.json()
 
 
-        if 'data' in matches_list_data and 'tiers' in matches_list_data['data']:
-            tiers_data = matches_list_data['data']['tiers']
+            if 'data' in matches_list_data and 'tiers' in matches_list_data['data']:
+                tiers_data = matches_list_data['data']['tiers']
 
-            for tier_name, tier_data in tiers_data.items():
-                if isinstance(tier_data, dict):
-                    matches = tier_data.get('matches', [])
-                    for match_summary in matches:
-                        status = match_summary.get('status')
-                        if status == "finished":
+                for tier_name, tier_data in tiers_data.items():
+                    if isinstance(tier_data, dict):
+                        matches = tier_data.get('matches', [])
+                        for match_summary in matches:
                             slug = match_summary.get('slug')
                             if slug:
                                 match_details_url = f"{base_url_match_details}{slug}?with=games"
@@ -80,6 +82,7 @@ try:
                                             game_number = game.get('number')
                                             if game_id and game_number in [1, 2]:
                                                 game_player_stats_url = f"{base_url_game_player_stats}{game_id}/players_stats"
+                                                print(f"Fetching URL: {game_player_stats_url}") # Added console log for game player stats URL
                                                 try:
                                                     response_game_player_stats = requests.get(game_player_stats_url)
                                                     response_game_player_stats.raise_for_status()
@@ -163,12 +166,11 @@ try:
                                     print(f"An unexpected error occurred for match slug {slug}: {e}")
                             else:
                                 print("Slug not found for a match.")
-                        else:
-                            print(f"Skipping match due to status: {status}")
-                else:
-                    print(f"Unexpected data type for {tier_name}: {type(tier_data)}")
-        else:
-            print("No 'data.tiers' data found in the response.")
+                    else:
+                        print(f"Unexpected data type for {tier_name}: {type(tier_data)}")
+            else:
+                print("No 'data.tiers' data found in the response.")
+            current_date += timedelta(days=1) # Increment date
 
 
     print(f"Data saved to {csv_file_path}")
