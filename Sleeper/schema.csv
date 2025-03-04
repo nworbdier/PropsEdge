@@ -1,0 +1,3 @@
+,gid,sport,league,game_time,home,away,sb_name,player_name,price,updated,line,market,matchup,bet_url,sid
+0,59ed9128013613818c3df2f922ab98a9,BASKETBALL,NBA,2025-03-03T02:40:00Z,Phoenix Suns,Minnesota Timberwolves,Fliff,Devin Booker Over 28.5,-120,2025-03-03T03:23:53Z,28.5,Player Points,Phoenix Suns vs Minnesota Timberwolves,https://sports.getfliff.com/markets/293968_c_p_304_inplay,None
+1,59ed9128013613818c3df2f922ab98a9,BASKETBALL,NBA,2025-03-03T02:40:00Z,Phoenix Suns,Minnesota Timberwolves,Fliff,Devin Booker Under 28.5,-125,2025-03-03T03:23:53Z,28.5,Player Points,Phoenix Suns vs Minnesota Timberwolves,https://sports.getfliff.com/markets/293968_c_p_304_inplay,None
